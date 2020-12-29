@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export TELEMETRY_TOPIC='openherb/telemetry'
+
+python3 -m cloud-link
