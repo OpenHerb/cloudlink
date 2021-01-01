@@ -6,10 +6,11 @@ The sensor values will be collected and sent in a payload to the cloud in a json
 {
     "T": 30.0,
     "H": 45.0,
-    "L": 78.0
+    "L": 78.0,
+    "I": "2021-01-01T19:20:21+00:00"
 }
 ```
-At this point in time we do not have alot of data to be publishing.
+At this point in time we do not have alot of data to be publishing. `T` is the temperature in celsuis, `H` is the soil humidity in %, `L` is the luminous flux or ambient sunlight in lux and `I` is the timestamp of the last completed water injection.
 
 ## Cloud Services
 Here are 2 conventional approaches to IoT architectures:
