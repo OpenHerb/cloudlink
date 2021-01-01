@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export TELEMETRY_TOPIC='openherb/telemetry'
-export MQTT_BROKER='localhost'
-export PORT='5000'
+source .env
 
-python3 -m cloud-link
+python3 -m cloudlink
