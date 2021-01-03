@@ -17,12 +17,14 @@ if __name__ == "__main__":
 
     # telemetry reporting loop
     while True:
-        time.sleep(5)
+        temp = float(input("T: "))
+        humidity = float(input("H: "))
+        lux = float(input("L: "))
         firebase.publish(
             {
-                "T": 30.4,
-                "H": 30.4,
-                "L": 40,
+                "T": temp,
+                "H": humidity,
+                "L": lux,
                 "I": datetime.isoformat(datetime.utcnow())
             }
         )
