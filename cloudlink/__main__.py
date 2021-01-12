@@ -37,6 +37,10 @@ if __name__ == "__main__":
             lux = 0.0
             sensorframe = line.decode()
             print("Sensorframe: {}".format(sensorframe))
+            with open( "/sys/class/thermal/thermal_zone0/temp" ) as tempFile:
+                cpu_temp = tempFile.read()
+                tempFile.close()
+            temp = round(float(cpu_temp)/1000, 2)
             for value in sensorframe.split('|'):
                 if value.split('&')[0] == 'SM':
                     humidity = int(value.split('&')[1])
@@ -44,9 +48,10 @@ if __name__ == "__main__":
                     lux = int(value.split('&')[1])
             firebase.publish(
                 {
-                    "T": 0.0,
+                    "T": temp,
                     "H": humidity,
                     "L": lux,
                     "I": datetime.isoformat(datetime.utcnow())
                 }
             )
+        time.sleep(5)
