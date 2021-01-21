@@ -21,7 +21,7 @@ if __name__ == "__main__":
         serial_connection = serial.Serial(
             port='/dev/ttyUSB0',
             baudrate=9600,
-            timeout=5.0
+            timeout=30.0
         )
     except (serial.SerialException, FileNotFoundError) as exc:
         print("Serial connection failed")
@@ -35,6 +35,7 @@ if __name__ == "__main__":
         else:
             humidity = 0.0
             lux = 0.0
+            cpu_temp = 0.0
             sensorframe = line.decode()
             print("Sensorframe: {}".format(sensorframe))
             with open( "/sys/class/thermal/thermal_zone0/temp" ) as tempFile:
@@ -54,4 +55,3 @@ if __name__ == "__main__":
                     "I": datetime.isoformat(datetime.utcnow())
                 }
             )
-        time.sleep(5)
