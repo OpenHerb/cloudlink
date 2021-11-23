@@ -37,8 +37,9 @@ class MQTTClient(Client):
         self.qos = 0
         self._logger.info("Initialized %s", __class__.__name__)
 
-    def start(self):
+    def start(self) -> None:
         """
+        Authenticate and connect to the MQTT broker
         """
         self.username_pw_set('/:microservice', 'microservice')
         try:
