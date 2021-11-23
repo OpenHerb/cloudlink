@@ -8,7 +8,7 @@ Modified: 2021-11
 import logging
 import logging.config
 
-from cloudlink import __version__
+from cloudlink.__version__ import __version__
 
 __all__ = ['__version__']
 
