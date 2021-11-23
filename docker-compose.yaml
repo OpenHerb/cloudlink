@@ -1,5 +1,5 @@
 ---
-version: 3.9
+version: '3.9'
 services:  
   rmq:
     container_name: rmq
@@ -14,13 +14,15 @@ services:
     container_name: cloudlink
     depends_on:
       - rmq
-    build: './docker/dev'
+    build: 
+      context: .
+      dockerfile: docker/dev/Dockerfile
     volumes:
       - .:/app
     networks:
       - mqtt
-    devices:
-      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    # devices:
+    #   - "/dev/ttyUSB0:/dev/ttyUSB0"
     environment:
       - RABBITMQ_ADDR=rmq:1883
       - TELEMETRY_TOPIC=topic/telemetry
