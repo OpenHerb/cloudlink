@@ -11,4 +11,4 @@ updates:
     schedule:
       interval: "weekly"
       # Check for pip updates on Mondays
-      day: "Friday"
+      day: "friday"
