@@ -2,7 +2,8 @@
 
 import json
 import logging
-from paho.mqtt.client import Client
+from typing import Any
+from paho.mqtt.client import Client, MQTTMessage
 
 from cloudlink.models.telemetry import Telemetry
 
@@ -21,14 +22,22 @@ class MQTTClient:
     def connect(self):
         """
         """
+        self.client.username_pw_set('/:microservice', 'microservice')
+        self.client.on_connect = self.on_connect
+        self.client.on_message = self.on_message
         try:
             self.client.connect(self.host, port=self.port, keepalive=60)
         except ConnectionError as exc:
             self._logger.error(
                 "Connection exception occurred while trying to connect to MQTT broker: %s", exc)
             raise exc
+        self.client.loop_start()
+        self._logger.info("Connected to MQTT broker %s:%s", self.host, self.port)
 
-    def on_connect(self, client: Client, userdata, flags: dict, response: int):
+    def on_message(self, client: Client, userdata: Any, msg: MQTTMessage):
+        self._logger.debug("Received: %s from client: %s with userdata: %s", msg, client, userdata)
+
+    def on_connect(self, client: Client, userdata: Any, flags: dict, response: int):
         """
         Response Codes:
         0: Connection successful
@@ -43,7 +52,7 @@ class MQTTClient:
         else:
             print("on_connect received a bad response code:", response)
 
-    def on_disconnect(self, client: Client, userdata, response: int):
+    def on_disconnect(self, client: Client, userdata: Any, response: int):
         """
         Response Codes:
         0: Disconnect callback execution successful
@@ -61,7 +70,7 @@ class MQTTClient:
         :param telemetry: device telemetry
         :type telemetry: Telemetry
         """
-        self.client.publish(self.telemetry_topic, payload=telemetry.serialize(),
+        self.client.publish(self.telemetry_topic, payload=json.dumps(telemetry.serialize()),
                             qos=self.qos, retain=True)
         self._logger.info("Published to %s: %s ", self.telemetry_topic, "\n" +
                           json.dumps(telemetry.serialize(), indent=2))
