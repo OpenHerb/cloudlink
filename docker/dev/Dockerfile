@@ -1,11 +1,13 @@
-
 FROM ubuntu:latest
 
 LABEL version="2.0"
 LABEL Christian Sargusingh "https://github.com/cSDes1gn"
 
 # Grab dependencies and generate locale
-RUN apt update && apt upgrade -y && apt install -y git sudo locales && locale-gen en_US.UTF-8
+RUN apt update && \
+	apt upgrade -y && \
+	apt install -y python3 python3-pip sudo locales && \
+	locale-gen en_US.UTF-8
 
 WORKDIR /app
 
