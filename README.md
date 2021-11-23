@@ -12,10 +12,10 @@ Add the cloudlink microservice to the production stack:
 ```yaml
 services:
   cloudlink:
-	image: ghcr.io/openherb/cloudlink:latest
+    image: ghcr.io/openherb/cloudlink:latest
     container_name: cloudlink
-	restart: always
-	depends_on:
+    restart: always
+    depends_on:
       - rmq
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
@@ -37,7 +37,7 @@ docker compose down --rmi "all"
 ```
 
 ## RabbitMQ Management
-Access the rabbitmq management server at http://localhost:15672/
+Access the rabbitmq management server at http://localhost:15672/. Visit the `Queues` tab to view the publish and subscription digests.
 
 ### Admin Login Credentials
 user: `admin`
