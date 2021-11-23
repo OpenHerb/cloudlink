@@ -1,74 +1,42 @@
 # -*- coding: utf-8 -*-
-import time
+"""
+OpenHerb CloudLink
+==================
+Modified: 2021-11
+
+Copyright © 2021 OpenHerb.
+"""
+
 import os
-import serial
-from datetime import datetime
-from cloudlink.rtd.rtd import RTDLink
-import random
+import time
+import logging
 
+from cloudlink.mqtt.client import MQTTClient
+from cloudlink.models.telemetry import Telemetry
 
-if __name__ == "__main__":
-    
-    firebase = RTDLink(
-        os.environ['API_KEY'],
-        os.environ['AUTH_DOMAIN'],
-        os.environ['DB_URL'],
-        os.environ['BUCKET']
-    )
+_log = logging.getLogger(__name__)
 
-    # telemetry reporting loop
-    if os.environ['CL_DEBUG'] != "true":
-        try:
-            serial_connection = serial.Serial(
-                port='/dev/ttyUSB0',
-                baudrate=9600,
-                timeout=30.0
-            )
-        except (serial.SerialException, FileNotFoundError) as exc:
-            print("Serial connection failed")
-            exit(1)
+# RMQ Event config
+host = os.environ['RABBITMQ_ADDR'].split(':')[0]
+port = int(os.environ['RABBITMQ_ADDR'].split(':')[1])
+telemetry_topic = os.environ.get('TELEMETRY_TOPIC', "topic/telemetry")
+client_id = os.environ.get('CLIENT_ID', default="")
 
-        while True:
-            try:
-                line = serial_connection.readline()
-            except serial.SerialException as exc:
-                print("Failed to read sensorframe")
-            else:
-                humidity = 0.0
-                lux = 0.0
-                cpu_temp = 0.0
-                temp = round(float(cpu_temp)/1000, 2)
-                sensorframe = line.decode()
-                print("Sensorframe: {}".format(sensorframe))
-                for value in sensorframe.split('|'):
-                    if value.split('&')[0] == 'SM':
-                        humidity = int(value.split('&')[1])
-                    elif value.split('&')[0] == 'LX':
-                        lux = int(value.split('&')[1])
-                firebase.publish(
-                    {
-                        "T": temp,
-                        "H": humidity,
-                        "L": lux,
-                        "I": datetime.isoformat(datetime.utcnow())
-                    }
-                )
-    else:
-        # debug mode mocking serial sensorframe
-        while True:
-            time.sleep(10)
-            sh = random.randint(0,100)
-            rh = random.randint(0,100)
-            lux = random.randint(0,10000)
-            pa = random.randint(90,110)
-            temp = random.randint(15,35)
-            payload = {
-                "TP": temp,
-                "RH": rh,
-                "PA": pa,
-                "LX": lux,
-                "SM": sh,
-                "I": datetime.isoformat(datetime.utcnow())
-            }
-            firebase.publish(payload)
-            print("Payload: {}".format(payload))
+_log.debug("OpenHerb Client")
+_log.debug("==========================================")
+_log.debug("Client ID: %s", client_id)
+_log.debug("RabbitMQ Broker: %s:%s", host, port)
+_log.debug("Telemetry Topic: %s", telemetry_topic)
+
+mqtt_client = MQTTClient(
+    client_id=client_id,
+    host=host,
+    port=port,
+    telemetry_topic=telemetry_topic
+)
+
+while True:
+    time.sleep(5)
+    telemetry = Telemetry()
+    telemetry.mock()
+    mqtt_client.publish_telemetry(telemetry)
