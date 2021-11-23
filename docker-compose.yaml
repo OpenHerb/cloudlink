@@ -1,0 +1,30 @@
+---
+version: 3.9
+services:  
+  rmq:
+    container_name: rmq
+    image: rabbitmq:3.9-management
+    volumes:
+      - "./rabbitmq/:/etc/rabbitmq/"
+    ports:
+      - "15672:15672"
+    networks:
+      - mqtt
+  cloudlink:
+    container_name: cloudlink
+    depends_on:
+      - rmq
+    build: './docker/dev'
+    volumes:
+      - .:/app
+    networks:
+      - mqtt
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    environment:
+      - RABBITMQ_ADDR=rmq:1883
+      - TELEMETRY_TOPIC=topic/telemetry
+      - CLIENT_ID=d1db92fb-ba15-4dcd-8603-64e0bcf1828b
+
+networks:
+  mqtt:
