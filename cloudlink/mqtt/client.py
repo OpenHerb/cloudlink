@@ -29,13 +29,13 @@ from cloudlink.models.telemetry import Telemetry
 class MQTTClient(Client):
 
     def __init__(self, client_id: str, host: str, port: int, telemetry_topic: str) -> None:
+        super().__init__(client_id)
         self._logger = logging.getLogger(__name__)
-        self.client_id = client_id
-        super().__init__(self.client_id)
         self.host = host
         self.port = port
         self.telemetry_topic = telemetry_topic
         self.qos = 0
+        self._logger.info("Initialized %s", __class__.__name__)
 
     def start(self):
         """
