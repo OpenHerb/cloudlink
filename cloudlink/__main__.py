@@ -34,7 +34,7 @@ mqtt_client = MQTTClient(
     port=port,
     telemetry_topic=telemetry_topic
 )
-mqtt_client.connect()
+mqtt_client.start()
 
 while True:
     time.sleep(5)
