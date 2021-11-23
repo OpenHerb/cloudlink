@@ -37,9 +37,28 @@
       "name": "microservice",
       "vhost": "/",
       "type": "topic",
-      "durable": false,
+      "durable": true,
       "auto_delete": true,
       "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "monitor",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": true,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "microservice",
+      "vhost": "/",
+      "destination": "monitor",
+      "destination_type": "queue",
+      "routing_key": "topic.telemetry",
       "arguments": {}
     }
   ]
